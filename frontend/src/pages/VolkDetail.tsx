@@ -211,11 +211,58 @@ export function VolkDetail() {
               </select>
             </div>
             <div className="field">
+              <label>Futtervorrat</label>
+              <select
+                value={durchsichtForm.futtervorrat}
+                onChange={(e) => setDurchsichtForm({ ...durchsichtForm, futtervorrat: e.target.value })}
+              >
+                <option value="">– keine Angabe –</option>
+                <option value="sehr gut">sehr gut</option>
+                <option value="gut">gut</option>
+                <option value="wenig">wenig</option>
+                <option value="leer">leer</option>
+              </select>
+            </div>
+            <div className="field">
+              <label>Sanftmut</label>
+              <select
+                value={durchsichtForm.sanftmut}
+                onChange={(e) => setDurchsichtForm({ ...durchsichtForm, sanftmut: e.target.value })}
+              >
+                <option value="">– keine Angabe –</option>
+                <option value="ruhig">ruhig</option>
+                <option value="normal">normal</option>
+                <option value="nervös">nervös</option>
+                <option value="bösartig">bösartig</option>
+              </select>
+            </div>
+            <div className="field">
               <label>Brutnest</label>
               <input
                 placeholder="z.B. geschlossen, lückig..."
                 value={durchsichtForm.brutnest}
                 onChange={(e) => setDurchsichtForm({ ...durchsichtForm, brutnest: e.target.value })}
+              />
+            </div>
+            <div className="field">
+              <label>Krankheiten / Auffälligkeiten</label>
+              <input
+                value={durchsichtForm.krankheiten}
+                onChange={(e) => setDurchsichtForm({ ...durchsichtForm, krankheiten: e.target.value })}
+              />
+            </div>
+            <div className="field">
+              <label>Maßnahmen</label>
+              <input
+                value={durchsichtForm.massnahmen}
+                onChange={(e) => setDurchsichtForm({ ...durchsichtForm, massnahmen: e.target.value })}
+              />
+            </div>
+            <div className="field">
+              <label>Notizen</label>
+              <input
+                value={durchsichtForm.notizen}
+                onChange={(e) => setDurchsichtForm({ ...durchsichtForm, notizen: e.target.value })}
               />
             </div>
             <div className="field checkbox">
@@ -262,53 +309,6 @@ export function VolkDetail() {
                 onChange={(e) => setDurchsichtForm({ ...durchsichtForm, verdeckelte_brut: e.target.checked })}
               />
               <label htmlFor="verdeckelteBrut">Verdeckelte Brut</label>
-            </div>
-            <div className="field">
-              <label>Futtervorrat</label>
-              <select
-                value={durchsichtForm.futtervorrat}
-                onChange={(e) => setDurchsichtForm({ ...durchsichtForm, futtervorrat: e.target.value })}
-              >
-                <option value="">– keine Angabe –</option>
-                <option value="sehr gut">sehr gut</option>
-                <option value="gut">gut</option>
-                <option value="wenig">wenig</option>
-                <option value="leer">leer</option>
-              </select>
-            </div>
-            <div className="field">
-              <label>Sanftmut</label>
-              <select
-                value={durchsichtForm.sanftmut}
-                onChange={(e) => setDurchsichtForm({ ...durchsichtForm, sanftmut: e.target.value })}
-              >
-                <option value="">– keine Angabe –</option>
-                <option value="ruhig">ruhig</option>
-                <option value="normal">normal</option>
-                <option value="nervös">nervös</option>
-                <option value="bösartig">bösartig</option>
-              </select>
-            </div>
-            <div className="field">
-              <label>Krankheiten / Auffälligkeiten</label>
-              <input
-                value={durchsichtForm.krankheiten}
-                onChange={(e) => setDurchsichtForm({ ...durchsichtForm, krankheiten: e.target.value })}
-              />
-            </div>
-            <div className="field">
-              <label>Maßnahmen</label>
-              <input
-                value={durchsichtForm.massnahmen}
-                onChange={(e) => setDurchsichtForm({ ...durchsichtForm, massnahmen: e.target.value })}
-              />
-            </div>
-            <div className="field">
-              <label>Notizen</label>
-              <input
-                value={durchsichtForm.notizen}
-                onChange={(e) => setDurchsichtForm({ ...durchsichtForm, notizen: e.target.value })}
-              />
             </div>
             <div className="form-actions">
               <button className="btn" type="submit">
