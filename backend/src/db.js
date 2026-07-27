@@ -14,6 +14,14 @@ db.pragma('journal_mode = WAL');
 db.pragma('foreign_keys = ON');
 
 db.exec(`
+CREATE TABLE IF NOT EXISTS users (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  username TEXT NOT NULL UNIQUE,
+  name TEXT,
+  password_hash TEXT NOT NULL,
+  erstellt_am TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
 CREATE TABLE IF NOT EXISTS standorte (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT NOT NULL,

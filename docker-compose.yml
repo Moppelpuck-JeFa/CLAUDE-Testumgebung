@@ -1,0 +1,20 @@
+services:
+  backend:
+    build: ./backend
+    environment:
+      - JWT_SECRET=${JWT_SECRET:?Bitte JWT_SECRET in der .env-Datei setzen, z.B. mit "openssl rand -hex 32"}
+      - PORT=3001
+    volumes:
+      - imkerei-data:/app/data
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  imkerei-data:
