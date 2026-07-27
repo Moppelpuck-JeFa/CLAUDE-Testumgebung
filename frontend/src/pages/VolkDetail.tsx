@@ -230,10 +230,16 @@ export function VolkDetail() {
             </div>
             <div className="field">
               <label>Futtervorrat</label>
-              <input
+              <select
                 value={durchsichtForm.futtervorrat}
                 onChange={(e) => setDurchsichtForm({ ...durchsichtForm, futtervorrat: e.target.value })}
-              />
+              >
+                <option value="">– keine Angabe –</option>
+                <option value="sehr gut">sehr gut</option>
+                <option value="gut">gut</option>
+                <option value="wenig">wenig</option>
+                <option value="leer">leer</option>
+              </select>
             </div>
             <div className="field">
               <label>Krankheiten / Auffälligkeiten</label>
