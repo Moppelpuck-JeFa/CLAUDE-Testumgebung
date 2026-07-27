@@ -128,17 +128,26 @@ define('JWT_SECRET', 'der-zufaellige-wert-von-oben');
 alt. Prüfe im Kundencenter das PHP-Fehlerprotokoll (oft unter „Logs“ oder
 „Protokolle“ erreichbar).
 
-**`/imkerei/api/health` liefert 404**
-→ `.htaccess` in `imkerei/api/` wird nicht angewendet. Prüfe, ob dein
-Hosting-Paket `.htaccess`/`mod_rewrite` erlaubt (bei web.de standardmäßig der
-Fall). Prüfe auch, ob die `.htaccess`-Datei tatsächlich mit hochgeladen wurde
-(manche FTP-Programme blenden Dateien mit führendem Punkt standardmäßig aus –
-in FileZilla z.B. unter Server → „Versteckte Dateien anzeigen“ aktivieren).
+**`/imkerei/api/health` liefert 404 („The requested URL was not found on
+this server“, Apaches eigene Fehlermeldung statt einer JSON-Antwort)**
+→ Auf manchen (v.a. FastCGI/PHP-FPM-basierten) Shared-Hosting-Konfigurationen
+funktioniert die Übergabe zwischen zwei verschachtelten `.htaccess`-Dateien
+(`imkerei/.htaccess` → `imkerei/api/.htaccess`) nicht zuverlässig, selbst wenn
+`mod_rewrite` grundsätzlich aktiv ist. Deshalb übernimmt bereits **eine
+einzige** `.htaccess` in `imkerei/` die komplette Weiterleitung inkl. API
+(`RewriteRule ^api/(.*)$ api/index.php`), ohne sich auf die verschachtelte
+`api/.htaccess` zu verlassen. Falls es trotzdem 404 liefert: Prüfe, ob die
+`.htaccess`-Datei tatsächlich mit hochgeladen wurde (manche FTP-Programme
+blenden Dateien mit führendem Punkt standardmäßig aus – in FileZilla z.B.
+unter Server → „Versteckte Dateien anzeigen“ aktivieren) und ob `.htaccess`
+grundsätzlich erlaubt ist (teste mit einer erfundenen URL wie
+`imkerei/xyz123test` – lädt dort die App statt einer Apache-Fehlerseite,
+funktioniert `mod_rewrite`/`AllowOverride` prinzipiell).
 
 **Login funktioniert nicht, aber `/imkerei/api/auth/status` antwortet korrekt**
 → Der `Authorization`-Header kommt nicht bei PHP an (kommt auf manchen
 Shared-Hosting-Konfigurationen vor). Die mitgelieferte `.htaccess` in
-`imkerei/api/` enthält bereits eine Rewrite-Regel, die das behebt. Falls es
+`imkerei/` enthält bereits eine Rewrite-Regel, die das behebt. Falls es
 trotzdem nicht funktioniert, wende dich an den web.de-Support und frage nach
 Aktivierung von „PHP CGI Authorization Header Passthrough“ bzw. `CGIPassAuth`.
 
