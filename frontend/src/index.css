@@ -282,6 +282,13 @@ form.form-grid {
   gap: 0.5rem;
 }
 
+.checkbox-row {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+}
+
 .form-actions {
   grid-column: 1 / -1;
   display: flex;

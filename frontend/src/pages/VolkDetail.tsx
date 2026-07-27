@@ -265,50 +265,52 @@ export function VolkDetail() {
                 onChange={(e) => setDurchsichtForm({ ...durchsichtForm, notizen: e.target.value })}
               />
             </div>
-            <div className="field checkbox">
-              <input
-                type="checkbox"
-                id="kgesehen"
-                checked={durchsichtForm.koenigin_gesehen}
-                onChange={(e) => setDurchsichtForm({ ...durchsichtForm, koenigin_gesehen: e.target.checked })}
-              />
-              <label htmlFor="kgesehen">Königin gesehen</label>
-            </div>
-            <div className="field checkbox">
-              <input
-                type="checkbox"
-                id="weiselzellen"
-                checked={durchsichtForm.weiselzellen}
-                onChange={(e) => setDurchsichtForm({ ...durchsichtForm, weiselzellen: e.target.checked })}
-              />
-              <label htmlFor="weiselzellen">Weiselzellen vorhanden</label>
-            </div>
-            <div className="field checkbox">
-              <input
-                type="checkbox"
-                id="stifte"
-                checked={durchsichtForm.stifte}
-                onChange={(e) => setDurchsichtForm({ ...durchsichtForm, stifte: e.target.checked })}
-              />
-              <label htmlFor="stifte">Stifte</label>
-            </div>
-            <div className="field checkbox">
-              <input
-                type="checkbox"
-                id="larven"
-                checked={durchsichtForm.larven}
-                onChange={(e) => setDurchsichtForm({ ...durchsichtForm, larven: e.target.checked })}
-              />
-              <label htmlFor="larven">Larven</label>
-            </div>
-            <div className="field checkbox">
-              <input
-                type="checkbox"
-                id="verdeckelteBrut"
-                checked={durchsichtForm.verdeckelte_brut}
-                onChange={(e) => setDurchsichtForm({ ...durchsichtForm, verdeckelte_brut: e.target.checked })}
-              />
-              <label htmlFor="verdeckelteBrut">Verdeckelte Brut</label>
+            <div className="checkbox-row">
+              <div className="field checkbox">
+                <input
+                  type="checkbox"
+                  id="kgesehen"
+                  checked={durchsichtForm.koenigin_gesehen}
+                  onChange={(e) => setDurchsichtForm({ ...durchsichtForm, koenigin_gesehen: e.target.checked })}
+                />
+                <label htmlFor="kgesehen">Königin gesehen</label>
+              </div>
+              <div className="field checkbox">
+                <input
+                  type="checkbox"
+                  id="weiselzellen"
+                  checked={durchsichtForm.weiselzellen}
+                  onChange={(e) => setDurchsichtForm({ ...durchsichtForm, weiselzellen: e.target.checked })}
+                />
+                <label htmlFor="weiselzellen">Weiselzellen vorhanden</label>
+              </div>
+              <div className="field checkbox">
+                <input
+                  type="checkbox"
+                  id="stifte"
+                  checked={durchsichtForm.stifte}
+                  onChange={(e) => setDurchsichtForm({ ...durchsichtForm, stifte: e.target.checked })}
+                />
+                <label htmlFor="stifte">Stifte</label>
+              </div>
+              <div className="field checkbox">
+                <input
+                  type="checkbox"
+                  id="larven"
+                  checked={durchsichtForm.larven}
+                  onChange={(e) => setDurchsichtForm({ ...durchsichtForm, larven: e.target.checked })}
+                />
+                <label htmlFor="larven">Larven</label>
+              </div>
+              <div className="field checkbox">
+                <input
+                  type="checkbox"
+                  id="verdeckelteBrut"
+                  checked={durchsichtForm.verdeckelte_brut}
+                  onChange={(e) => setDurchsichtForm({ ...durchsichtForm, verdeckelte_brut: e.target.checked })}
+                />
+                <label htmlFor="verdeckelteBrut">Verdeckelte Brut</label>
+              </div>
             </div>
             <div className="form-actions">
               <button className="btn" type="submit">
