@@ -27,6 +27,14 @@ $path = substr($requestPath, strlen($basePath));
 $path = '/' . trim($path, '/');
 $segments = array_values(array_filter(explode('/', $path), fn($s) => $s !== ''));
 
+// Manche FastCGI/PHP-FPM-Hosting-Konfigurationen liefern REQUEST_URI nach
+// einem mod_rewrite-Rewrite nicht zuverlässig zurück, sodass hier statt des
+// eigentlich angefragten Pfads noch "index.php" als erstes Segment übrig
+// bleibt. Das defensiv abfangen, statt fälschlich "Nicht gefunden" zu melden.
+if (($segments[0] ?? '') === 'index.php') {
+    array_shift($segments);
+}
+
 $resource = $segments[0] ?? '';
 $sub = $segments[1] ?? null;
 
