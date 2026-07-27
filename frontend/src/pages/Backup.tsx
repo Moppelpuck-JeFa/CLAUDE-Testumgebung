@@ -86,7 +86,7 @@ export function Backup() {
           <input
             ref={fileInputRef}
             type="file"
-            accept=".db"
+            accept=".db,.json"
             onChange={(e) => setSelectedFile(e.target.files?.[0] ?? null)}
           />
           <button className="btn danger" onClick={handleRestore} disabled={!selectedFile || restoring}>

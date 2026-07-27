@@ -6,8 +6,18 @@ eine Anmeldung; alle angemeldeten Benutzer teilen sich dieselben Daten.
 
 ## Stack
 
-- **Backend**: Node.js, Express, SQLite (better-sqlite3), JWT-Auth – REST-API unter `/api`
-- **Frontend**: React, TypeScript, Vite, React Router
+Es gibt zwei gleichwertige Backend-Varianten mit identischer API – das
+Frontend funktioniert unverändert mit beiden:
+
+- **`backend/`** – Node.js, Express, SQLite (better-sqlite3). Für lokale
+  Entwicklung, einen eigenen VPS oder Docker (siehe unten).
+- **`php-backend/`** – PHP (8.0+), MySQL/MariaDB, ohne externe Abhängigkeiten.
+  Für klassisches Shared-Hosting ohne SSH/Node.js, z.B. web.de, GMX, IONOS,
+  Strato. Siehe [`php-backend/DEPLOYMENT-WEBDE.md`](php-backend/DEPLOYMENT-WEBDE.md)
+  für eine Schritt-für-Schritt-Anleitung.
+
+**Frontend**: React, TypeScript, Vite, React Router (`frontend/`, für beide
+Backend-Varianten identisch).
 
 ## Module
 
@@ -117,6 +127,12 @@ curl -X POST -H "Authorization: Bearer <token>" \
 Bei Docker-Betrieb liegt die Datenbank im Volume `imkerei-data`; regelmäßige externe
 Backups (z.B. per Cronjob mit obigem `curl`-Aufruf) werden dennoch empfohlen, da ein
 gelöschtes Docker-Volume sonst zum vollständigen Datenverlust führt.
+
+Beim PHP/MySQL-Backend (`php-backend/`) läuft Backup/Restore über dieselbe
+Seite in der App, das Dateiformat ist dort aber ein JSON-Export aller Tabellen
+statt einer `.db`-Datei (siehe `php-backend/DEPLOYMENT-WEBDE.md`). Die beiden
+Formate sind nicht gegenseitig kompatibel – ein Backup vom Node-Backend lässt
+sich nicht ins PHP-Backend einspielen und umgekehrt.
 
 ## API-Übersicht
 

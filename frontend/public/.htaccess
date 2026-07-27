@@ -1,0 +1,16 @@
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase /
+
+# API-Anfragen unangetastet lassen (werden vom php-backend/ Unterordner beantwortet)
+RewriteCond %{REQUEST_URI} ^/api/ [NC]
+RewriteRule ^ - [L]
+
+# Vorhandene Dateien/Ordner (JS, CSS, Bilder, ...) direkt ausliefern
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Alle anderen Anfragen an die React-App weiterreichen (Client-Side-Routing)
+RewriteRule ^ index.html [L]
+</IfModule>

@@ -1,0 +1,80 @@
+<?php
+
+ini_set('display_errors', '0');
+error_reporting(E_ALL);
+
+require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/lib/db.php';
+require_once __DIR__ . '/lib/response.php';
+require_once __DIR__ . '/lib/jwt.php';
+require_once __DIR__ . '/lib/auth.php';
+require_once __DIR__ . '/handlers/auth.php';
+require_once __DIR__ . '/handlers/standorte.php';
+require_once __DIR__ . '/handlers/voelker.php';
+require_once __DIR__ . '/handlers/durchsichten.php';
+require_once __DIR__ . '/handlers/arzneimittel.php';
+require_once __DIR__ . '/handlers/behandlungen.php';
+require_once __DIR__ . '/handlers/ernten.php';
+require_once __DIR__ . '/handlers/backup.php';
+
+$method = $_SERVER['REQUEST_METHOD'];
+
+// Anfragen-Pfad relativ zum Ort dieses Scripts ermitteln, damit die App auch
+// in einem Unterordner (z.B. www.beispiel.de/imkerei/api/) funktioniert.
+$basePath = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'])), '/');
+$requestPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$path = substr($requestPath, strlen($basePath));
+$path = '/' . trim($path, '/');
+$segments = array_values(array_filter(explode('/', $path), fn($s) => $s !== ''));
+
+$resource = $segments[0] ?? '';
+$sub = $segments[1] ?? null;
+
+$input = null;
+if (in_array($method, ['POST', 'PUT'], true) && !str_contains($_SERVER['CONTENT_TYPE'] ?? '', 'multipart/form-data')) {
+    $raw = file_get_contents('php://input');
+    $decoded = $raw !== '' ? json_decode($raw, true) : [];
+    $input = is_array($decoded) ? $decoded : [];
+}
+
+try {
+    switch ($resource) {
+        case '':
+            json_response(['name' => 'Imkerei API (PHP)']);
+            break;
+        case 'health':
+            json_response(['status' => 'ok']);
+            break;
+        case 'auth':
+            handle_auth($method, $sub, $input);
+            break;
+        case 'standorte':
+            handle_standorte($method, $sub, $input);
+            break;
+        case 'voelker':
+            handle_voelker($method, $sub, $input);
+            break;
+        case 'durchsichten':
+            handle_durchsichten($method, $sub, $input);
+            break;
+        case 'arzneimittel':
+            handle_arzneimittel($method, $sub, $input);
+            break;
+        case 'behandlungen':
+            handle_behandlungen($method, $sub, $input);
+            break;
+        case 'ernten':
+            handle_ernten($method, $sub, $input);
+            break;
+        case 'backup':
+            handle_backup($method, $sub);
+            break;
+        default:
+            error_response('Nicht gefunden', 404);
+    }
+} catch (Throwable $e) {
+    error_log('[imkerei-api] ' . $e->getMessage());
+    if (!headers_sent()) {
+        error_response('Interner Serverfehler', 500);
+    }
+}

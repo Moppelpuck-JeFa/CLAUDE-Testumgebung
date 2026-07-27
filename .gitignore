@@ -2,6 +2,10 @@ node_modules/
 dist/
 backend/data/*
 !backend/data/.gitkeep
+php-backend/config.php
+php-backend/backups/*
+!php-backend/backups/.gitkeep
+!php-backend/backups/.htaccess
 *.log
 .DS_Store
 .env
