@@ -19,12 +19,22 @@ require_once __DIR__ . '/handlers/backup.php';
 
 $method = $_SERVER['REQUEST_METHOD'];
 
-// Anfragen-Pfad relativ zum Ort dieses Scripts ermitteln, damit die App auch
-// in einem Unterordner (z.B. www.beispiel.de/imkerei/api/) funktioniert.
-$basePath = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'])), '/');
-$requestPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-$path = substr($requestPath, strlen($basePath));
-$path = '/' . trim($path, '/');
+// Bevorzugt PATH_INFO nutzen (Apples eingebauter Mechanismus für "alles nach
+// dem Skriptnamen", z.B. /api/index.php/standorte/5 -> PATH_INFO=/standorte/5).
+// Das braucht keine .htaccess-Rewrite-Regel und funktioniert auch auf
+// Shared-Hosting-Konfigurationen, bei denen verschachtelte .htaccess-Dateien
+// oder mod_rewrite-Übergaben zwischen Verzeichnissen unzuverlässig sind.
+// Fallback: klassische Pfadermittlung über SCRIPT_NAME/REQUEST_URI für
+// Hosting, bei dem eine .htaccess die hübschen URLs bereits sauber auf
+// index.php umschreibt.
+if (isset($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] !== '') {
+    $path = '/' . trim($_SERVER['PATH_INFO'], '/');
+} else {
+    $basePath = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'])), '/');
+    $requestPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+    $path = substr($requestPath, strlen($basePath));
+    $path = '/' . trim($path, '/');
+}
 $segments = array_values(array_filter(explode('/', $path), fn($s) => $s !== ''));
 
 // Manche FastCGI/PHP-FPM-Hosting-Konfigurationen liefern REQUEST_URI nach

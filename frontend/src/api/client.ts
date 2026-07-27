@@ -3,7 +3,15 @@ import { clearToken, getToken } from './authStore';
 // import.meta.env.BASE_URL endet immer mit "/" (z.B. "/" oder "/imkerei/"),
 // dadurch funktioniert dieselbe Build-Ausgabe an der Domain-Wurzel wie in
 // einem Unterordner, ohne die API-Pfade separat konfigurieren zu müssen.
-const BASE = `${import.meta.env.BASE_URL}api`;
+//
+// VITE_API_ENTRY erlaubt zusätzlich, direkt auf api/index.php zu zielen
+// (Aufruf z.B. als .../api/index.php/standorte via PATH_INFO) statt auf die
+// von .htaccess umgeschriebene "schöne" URL .../api/standorte. Das ist für
+// das PHP-Backend auf Shared-Hosting gedacht, bei dem verschachtelte
+// .htaccess-Rewrite-Regeln nicht zuverlässig funktionieren. Der Node.js-
+// Backend-Standard (Docker/VPS/lokal) bleibt ohne diese Variable unverändert.
+const API_ENTRY = import.meta.env.VITE_API_ENTRY || '';
+const BASE = `${import.meta.env.BASE_URL}api${API_ENTRY}`;
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const token = getToken();

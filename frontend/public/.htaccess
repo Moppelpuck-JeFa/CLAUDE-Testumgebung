@@ -3,17 +3,12 @@ RewriteEngine On
 RewriteBase /imkerei/
 
 # Authorization-Header durchreichen (manche Shared-Hosting-Setups blocken ihn
-# sonst) – gilt auch für die API-Anfragen, die unten an api/index.php gehen.
+# sonst).
 RewriteCond %{HTTP:Authorization} .
 RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
-# API-Anfragen direkt an das PHP-Backend weiterreichen. Bewusst hier und
-# nicht über eine zweite, verschachtelte .htaccess in api/ gelöst – die
-# Übergabe zwischen zwei .htaccess-Ebenen funktioniert nicht auf jeder
-# Shared-Hosting-Konfiguration zuverlässig.
-RewriteRule ^api/(.*)$ api/index.php [QSA,L,PT]
-
-# Vorhandene Dateien/Ordner (JS, CSS, Bilder, ...) direkt ausliefern
+# Vorhandene Dateien/Ordner direkt ausliefern (u.a. api/index.php selbst,
+# das über PATH_INFO angesprochen wird, z.B. api/index.php/standorte).
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]

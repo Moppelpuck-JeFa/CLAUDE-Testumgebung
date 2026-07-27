@@ -33,12 +33,21 @@ Auf deinem eigenen Rechner (mit Node.js installiert):
 ```bash
 cd frontend
 npm install
-VITE_BASE_PATH=/imkerei/ npm run build
+VITE_BASE_PATH=/imkerei/ VITE_API_ENTRY=/index.php npm run build
 ```
 
-Das `VITE_BASE_PATH=/imkerei/` ist wichtig, damit alle Links, Skripte und
-API-Aufrufe im Build den richtigen Unterordner-Pfad verwenden. Das Ergebnis
-liegt danach in `frontend/dist/` (inklusive der enthaltenen `.htaccess`).
+- `VITE_BASE_PATH=/imkerei/` sorgt dafür, dass alle Links, Skripte und
+  API-Aufrufe im Build den richtigen Unterordner-Pfad verwenden.
+- `VITE_API_ENTRY=/index.php` lässt das Frontend die API direkt über
+  `api/index.php/...` (Apaches `PATH_INFO`-Mechanismus) statt über eine
+  „schöne“, per `.htaccess` umgeschriebene URL ansprechen. Das ist nötig, weil
+  auf manchen Shared-Hosting-Konfigurationen (u.a. bei web.de beobachtet) die
+  Übergabe zwischen zwei verschachtelten `.htaccess`-Dateien nicht
+  zuverlässig funktioniert – `PATH_INFO` braucht dafür gar keine
+  Rewrite-Regel und funktioniert praktisch überall.
+
+Das Ergebnis liegt danach in `frontend/dist/` (inklusive der enthaltenen
+`.htaccess`).
 
 ## 3. Dateien per FTP hochladen
 
@@ -110,9 +119,11 @@ define('JWT_SECRET', 'der-zufaellige-wert-von-oben');
 
 ## 6. Testen
 
-1. Rufe `https://luisenthaler-bienenstich.de/imkerei/api/health` auf – die
-   Antwort sollte `{"status":"ok"}` sein. Falls stattdessen ein Serverfehler
-   oder eine leere Seite erscheint, siehe Abschnitt „Fehlerbehebung“ unten.
+1. Rufe `https://luisenthaler-bienenstich.de/imkerei/api/index.php/health` auf
+   – die Antwort sollte `{"status":"ok"}` sein (beachte: `index.php` ist Teil
+   der URL, siehe Hinweis zu `VITE_API_ENTRY` oben). Falls stattdessen ein
+   Serverfehler oder eine leere Seite erscheint, siehe Abschnitt
+   „Fehlerbehebung“ unten.
 2. Rufe `https://luisenthaler-bienenstich.de/imkerei/` auf – die App sollte
    laden und dich zur Einrichtung des ersten Benutzers auffordern.
 3. Lege den ersten Benutzer an (das ist gleichzeitig die „Benutzeranmeldung“,
@@ -123,28 +134,37 @@ define('JWT_SECRET', 'der-zufaellige-wert-von-oben');
 
 ## Fehlerbehebung
 
-**`/imkerei/api/health` liefert einen 500-Fehler oder eine leere Seite**
+**Warum `api/index.php/health` statt einer „schönen“ URL wie `api/health`?**
+→ Die API wird bewusst direkt über die echte Datei `api/index.php` plus
+Apaches eingebautem `PATH_INFO`-Mechanismus angesprochen
+(`api/index.php/health`, `api/index.php/standorte`, ...), **ohne** dass dafür
+eine `.htaccess`-Rewrite-Regel nötig ist. Grund: Auf manchen (v.a.
+FastCGI/PHP-FPM-basierten) Shared-Hosting-Konfigurationen funktioniert die
+Übergabe zwischen zwei verschachtelten `.htaccess`-Dateien
+(`imkerei/.htaccess` → `imkerei/api/.htaccess`) nicht zuverlässig, selbst wenn
+`mod_rewrite` grundsätzlich aktiv ist. `PATH_INFO` umgeht dieses Problem
+komplett, da es eine Kernfunktion von Apache/PHP ist und keine eigene
+Rewrite-Regel für die API braucht. Das Frontend ist über
+`VITE_API_ENTRY=/index.php` bereits entsprechend gebaut, du musst hier nichts
+weiter tun.
+
+**`/imkerei/api/index.php/health` liefert einen 500-Fehler oder eine leere Seite**
 → Meist ein Datenbank-Zugangsdaten-Fehler in `config.php`, oder PHP-Version zu
 alt. Prüfe im Kundencenter das PHP-Fehlerprotokoll (oft unter „Logs“ oder
 „Protokolle“ erreichbar).
 
-**`/imkerei/api/health` liefert 404 („The requested URL was not found on
-this server“, Apaches eigene Fehlermeldung statt einer JSON-Antwort)**
-→ Auf manchen (v.a. FastCGI/PHP-FPM-basierten) Shared-Hosting-Konfigurationen
-funktioniert die Übergabe zwischen zwei verschachtelten `.htaccess`-Dateien
-(`imkerei/.htaccess` → `imkerei/api/.htaccess`) nicht zuverlässig, selbst wenn
-`mod_rewrite` grundsätzlich aktiv ist. Deshalb übernimmt bereits **eine
-einzige** `.htaccess` in `imkerei/` die komplette Weiterleitung inkl. API
-(`RewriteRule ^api/(.*)$ api/index.php`), ohne sich auf die verschachtelte
-`api/.htaccess` zu verlassen. Falls es trotzdem 404 liefert: Prüfe, ob die
-`.htaccess`-Datei tatsächlich mit hochgeladen wurde (manche FTP-Programme
-blenden Dateien mit führendem Punkt standardmäßig aus – in FileZilla z.B.
-unter Server → „Versteckte Dateien anzeigen“ aktivieren) und ob `.htaccess`
-grundsätzlich erlaubt ist (teste mit einer erfundenen URL wie
-`imkerei/xyz123test` – lädt dort die App statt einer Apache-Fehlerseite,
-funktioniert `mod_rewrite`/`AllowOverride` prinzipiell).
+**`/imkerei/api/index.php/health` liefert 404 oder „Nicht gefunden“**
+→ Prüfe zuerst mit `/imkerei/api/index.php` (ohne `/health`), ob die Datei an
+sich erreichbar ist und `{"name":"Imkerei API (PHP)"}` zeigt. Falls ja, aber
+der `/health`-Zusatz nicht ankommt, prüfe im Kundencenter, ob `AcceptPathInfo`
+für PHP-Dateien aktiv ist (bei Standard-Apache+PHP-Konfigurationen ist das der
+Default, ein Deaktivieren ist unüblich). Prüfe außerdem, ob die
+`.htaccess`-Datei in `imkerei/` tatsächlich mit hochgeladen wurde (manche
+FTP-Programme blenden Dateien mit führendem Punkt standardmäßig aus – in
+FileZilla z.B. unter Server → „Versteckte Dateien anzeigen“ aktivieren).
 
-**Login funktioniert nicht, aber `/imkerei/api/auth/status` antwortet korrekt**
+**Login funktioniert nicht, aber `/imkerei/api/index.php/auth/status`
+antwortet korrekt**
 → Der `Authorization`-Header kommt nicht bei PHP an (kommt auf manchen
 Shared-Hosting-Konfigurationen vor). Die mitgelieferte `.htaccess` in
 `imkerei/` enthält bereits eine Rewrite-Regel, die das behebt. Falls es
@@ -157,10 +177,11 @@ liefert einen 404**
 in `imkerei/` hochgeladen wurde und `mod_rewrite` aktiv ist.
 
 **Die App soll doch in einem anderen Unterordner oder an der Domain-Wurzel liegen**
-→ In `frontend/public/.htaccess` `RewriteBase` und die `RewriteCond` für
-`/imkerei/api/` an den neuen Pfad anpassen, Frontend mit passendem
-`VITE_BASE_PATH` neu bauen (bei Domain-Wurzel: `VITE_BASE_PATH=/` bzw. die
-Variable weglassen) und neu hochladen.
+→ In `frontend/public/.htaccess` die `RewriteBase` an den neuen Pfad
+anpassen, Frontend mit passendem `VITE_BASE_PATH` neu bauen (bei
+Domain-Wurzel: `VITE_BASE_PATH=/` bzw. die Variable weglassen) und neu
+hochladen. `VITE_API_ENTRY=/index.php` unverändert beibehalten, solange du
+weiter das PHP-Backend nutzt.
 
 ## Unterschiede zur Node.js/Docker-Variante
 
