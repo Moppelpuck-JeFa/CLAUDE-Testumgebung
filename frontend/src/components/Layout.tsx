@@ -16,6 +16,7 @@ export function Layout() {
           <NavLink to="/voelker">Bienenvölker</NavLink>
           <NavLink to="/arzneimittel">Arzneimittel-Bestandsbuch</NavLink>
           <NavLink to="/benutzer">Benutzer</NavLink>
+          <NavLink to="/backup">Backup</NavLink>
         </nav>
         <div className="sidebar-user">
           <div className="sidebar-user-name">{user?.name || user?.username}</div>

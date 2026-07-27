@@ -8,6 +8,7 @@ import { Voelker } from './pages/Voelker';
 import { VolkDetail } from './pages/VolkDetail';
 import { Arzneimittelbestand } from './pages/Arzneimittelbestand';
 import { Benutzer } from './pages/Benutzer';
+import { Backup } from './pages/Backup';
 
 function LoginRoute() {
   const { user, loading } = useAuth();
@@ -36,6 +37,7 @@ export default function App() {
             <Route path="/voelker/:id" element={<VolkDetail />} />
             <Route path="/arzneimittel" element={<Arzneimittelbestand />} />
             <Route path="/benutzer" element={<Benutzer />} />
+            <Route path="/backup" element={<Backup />} />
           </Route>
         </Routes>
       </AuthProvider>

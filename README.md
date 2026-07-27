@@ -21,6 +21,7 @@ eine Anmeldung; alle angemeldeten Benutzer teilen sich dieselben Daten.
 - **Behandlungen** – Behandlungen je Volk, verknüpft mit einem Arzneimittel; reduziert automatisch dessen Bestand und berechnet die Wartezeit
 - **Honigernte** – Erntemengen je Volk mit Datum und Sorte
 - **Arzneimittel-Bestandsbuch** – Bestand an Tierarzneimitteln (Chargennummer, Verfallsdatum, Bezugsquelle, Wartezeit) inkl. Anwendungshistorie je Mittel
+- **Backup & Wiederherstellung** – vollständige Datenbank als Datei herunterladen und bei Bedarf wiederherstellen
 
 Das Dashboard zeigt eine Übersicht sowie Warnungen zu laufenden Wartezeiten
 und bald ablaufenden Arzneimitteln.
@@ -87,6 +88,36 @@ in der App eingerichtet.
 - `POST /api/auth/login` liefert bei korrekten Zugangsdaten Benutzerdaten und Token.
 - Passwörter werden mit bcrypt gehasht, nie im Klartext gespeichert.
 
+## Backup & Wiederherstellung
+
+Über die Seite „Backup“ in der App (angemeldet erforderlich):
+
+- **Backup erstellen**: lädt eine konsistente Kopie der kompletten SQLite-Datenbank
+  herunter (alle Standorte, Völker, Durchsichten, Behandlungen, Ernten, Arzneimittel
+  und Benutzerkonten). Die Datei sollte an einem sicheren, separaten Ort aufbewahrt
+  werden (z.B. Cloud-Speicher).
+- **Wiederherstellen**: ersetzt die aktuelle Datenbank vollständig durch den Inhalt
+  einer zuvor heruntergeladenen Backup-Datei. Vor dem Überschreiben wird automatisch
+  eine Sicherheitskopie der bisherigen Datenbank unter
+  `backend/data/imkerei.db.vor-wiederherstellung-<Zeitstempel>` angelegt. Nach einer
+  Wiederherstellung werden alle Benutzer abgemeldet, da sich Zugangsdaten und Daten
+  geändert haben können.
+
+Auch über die API nutzbar (Authentifizierung erforderlich):
+
+```bash
+# Backup herunterladen
+curl -H "Authorization: Bearer <token>" http://localhost:3001/api/backup -o backup.db
+
+# Backup wiederherstellen
+curl -X POST -H "Authorization: Bearer <token>" \
+  -F "backup=@backup.db" http://localhost:3001/api/backup/restore
+```
+
+Bei Docker-Betrieb liegt die Datenbank im Volume `imkerei-data`; regelmäßige externe
+Backups (z.B. per Cronjob mit obigem `curl`-Aufruf) werden dennoch empfohlen, da ein
+gelöschtes Docker-Volume sonst zum vollständigen Datenverlust führt.
+
 ## API-Übersicht
 
 Alle Ressourcen unterstützen `GET /api/<ressource>`, `GET /api/<ressource>/:id`,
@@ -98,6 +129,7 @@ Alle Ressourcen unterstützen `GET /api/<ressource>`, `GET /api/<ressource>/:id`
 - `/api/arzneimittel`
 - `/api/behandlungen` (Filter: `?volk_id=`)
 - `/api/ernten` (Filter: `?volk_id=`)
+- `/api/backup` (GET: Download), `/api/backup/restore` (POST: Upload/Restore)
 
 Auth-Endpunkte:
 

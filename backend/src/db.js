@@ -7,13 +7,9 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const dataDir = path.join(__dirname, '..', 'data');
 if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
 
-const dbPath = path.join(dataDir, 'imkerei.db');
-export const db = new Database(dbPath);
+export const dbPath = path.join(dataDir, 'imkerei.db');
 
-db.pragma('journal_mode = WAL');
-db.pragma('foreign_keys = ON');
-
-db.exec(`
+const SCHEMA_SQL = `
 CREATE TABLE IF NOT EXISTS users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   username TEXT NOT NULL UNIQUE,
@@ -103,4 +99,22 @@ CREATE INDEX IF NOT EXISTS idx_durchsichten_volk ON durchsichten(volk_id);
 CREATE INDEX IF NOT EXISTS idx_behandlungen_volk ON behandlungen(volk_id);
 CREATE INDEX IF NOT EXISTS idx_behandlungen_arzneimittel ON behandlungen(arzneimittel_id);
 CREATE INDEX IF NOT EXISTS idx_ernten_volk ON ernten(volk_id);
-`);
+`;
+
+function openDatabase() {
+  const instance = new Database(dbPath);
+  instance.pragma('journal_mode = WAL');
+  instance.pragma('foreign_keys = ON');
+  instance.exec(SCHEMA_SQL);
+  return instance;
+}
+
+export let db = openDatabase();
+
+// Nach einer Wiederherstellung (Restore) aus einem Backup muss die
+// Verbindung zur ausgetauschten Datenbankdatei neu aufgebaut werden. Da
+// andere Module `db` per ES-Module-Live-Binding importieren, sehen sie die
+// neue Instanz automatisch, sobald sie hier neu zugewiesen wird.
+export function reopenDatabase() {
+  db = openDatabase();
+}

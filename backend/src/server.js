@@ -9,6 +9,7 @@ import { router as durchsichtenRouter } from './routes/durchsichten.js';
 import { router as arzneimittelRouter } from './routes/arzneimittel.js';
 import { router as behandlungenRouter } from './routes/behandlungen.js';
 import { router as erntenRouter } from './routes/ernten.js';
+import { router as backupRouter } from './routes/backup.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -26,6 +27,7 @@ app.use('/api/durchsichten', requireAuth, durchsichtenRouter);
 app.use('/api/arzneimittel', requireAuth, arzneimittelRouter);
 app.use('/api/behandlungen', requireAuth, behandlungenRouter);
 app.use('/api/ernten', requireAuth, erntenRouter);
+app.use('/api/backup', requireAuth, backupRouter);
 
 app.use((err, req, res, next) => {
   console.error(err);
