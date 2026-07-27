@@ -21,12 +21,12 @@ router.post('/', (req, res) => {
   const b = req.body;
   if (!b.volk_id || !b.datum) return res.status(400).json({ error: 'volk_id und datum sind erforderlich' });
   const result = db.prepare(`
-    INSERT INTO durchsichten (volk_id, datum, volksstaerke, brutnest, koenigin_gesehen, weiselzellen, futtervorrat, krankheiten, massnahmen, notizen)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO durchsichten (volk_id, datum, volksstaerke, brutnest, koenigin_gesehen, weiselzellen, futtervorrat, sanftmut, krankheiten, massnahmen, notizen)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).run(
     b.volk_id, b.datum, b.volksstaerke ?? null, b.brutnest ?? null,
     b.koenigin_gesehen ? 1 : 0, b.weiselzellen ? 1 : 0, b.futtervorrat ?? null,
-    b.krankheiten ?? null, b.massnahmen ?? null, b.notizen ?? null
+    b.sanftmut ?? null, b.krankheiten ?? null, b.massnahmen ?? null, b.notizen ?? null
   );
   res.status(201).json(db.prepare('SELECT * FROM durchsichten WHERE id = ?').get(result.lastInsertRowid));
 });
@@ -37,7 +37,7 @@ router.put('/:id', (req, res) => {
   const b = req.body;
   db.prepare(`
     UPDATE durchsichten SET datum = ?, volksstaerke = ?, brutnest = ?, koenigin_gesehen = ?,
-      weiselzellen = ?, futtervorrat = ?, krankheiten = ?, massnahmen = ?, notizen = ?
+      weiselzellen = ?, futtervorrat = ?, sanftmut = ?, krankheiten = ?, massnahmen = ?, notizen = ?
     WHERE id = ?
   `).run(
     b.datum ?? existing.datum,
@@ -46,6 +46,7 @@ router.put('/:id', (req, res) => {
     b.koenigin_gesehen !== undefined ? (b.koenigin_gesehen ? 1 : 0) : existing.koenigin_gesehen,
     b.weiselzellen !== undefined ? (b.weiselzellen ? 1 : 0) : existing.weiselzellen,
     b.futtervorrat ?? existing.futtervorrat,
+    b.sanftmut ?? existing.sanftmut,
     b.krankheiten ?? existing.krankheiten,
     b.massnahmen ?? existing.massnahmen,
     b.notizen ?? existing.notizen,

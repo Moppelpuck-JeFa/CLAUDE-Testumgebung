@@ -42,6 +42,7 @@ CREATE TABLE IF NOT EXISTS durchsichten (
   koenigin_gesehen TINYINT(1) NOT NULL DEFAULT 0,
   weiselzellen TINYINT(1) NOT NULL DEFAULT 0,
   futtervorrat VARCHAR(255) NULL,
+  sanftmut VARCHAR(50) NULL,
   krankheiten TEXT NULL,
   massnahmen TEXT NULL,
   notizen TEXT NULL,

@@ -12,6 +12,7 @@ const emptyDurchsicht = {
   koenigin_gesehen: false,
   weiselzellen: false,
   futtervorrat: '',
+  sanftmut: '',
   krankheiten: '',
   massnahmen: '',
   notizen: '',
@@ -239,6 +240,19 @@ export function VolkDetail() {
                 <option value="gut">gut</option>
                 <option value="wenig">wenig</option>
                 <option value="leer">leer</option>
+              </select>
+            </div>
+            <div className="field">
+              <label>Sanftmut</label>
+              <select
+                value={durchsichtForm.sanftmut}
+                onChange={(e) => setDurchsichtForm({ ...durchsichtForm, sanftmut: e.target.value })}
+              >
+                <option value="">– keine Angabe –</option>
+                <option value="ruhig">ruhig</option>
+                <option value="normal">normal</option>
+                <option value="nervös">nervös</option>
+                <option value="bösartig">bösartig</option>
               </select>
             </div>
             <div className="field">

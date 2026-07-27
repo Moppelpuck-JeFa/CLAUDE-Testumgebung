@@ -30,6 +30,7 @@ export interface Durchsicht {
   koenigin_gesehen: number;
   weiselzellen: number;
   futtervorrat: string | null;
+  sanftmut: string | null;
   krankheiten: string | null;
   massnahmen: string | null;
   notizen: string | null;

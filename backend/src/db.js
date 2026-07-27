@@ -48,6 +48,7 @@ CREATE TABLE IF NOT EXISTS durchsichten (
   koenigin_gesehen INTEGER DEFAULT 0,
   weiselzellen INTEGER DEFAULT 0,
   futtervorrat TEXT,
+  sanftmut TEXT,
   krankheiten TEXT,
   massnahmen TEXT,
   notizen TEXT,
@@ -101,11 +102,22 @@ CREATE INDEX IF NOT EXISTS idx_behandlungen_arzneimittel ON behandlungen(arzneim
 CREATE INDEX IF NOT EXISTS idx_ernten_volk ON ernten(volk_id);
 `;
 
+// Für bereits bestehende Datenbanken: Spalten nachrüsten, die erst nach dem
+// ursprünglichen CREATE TABLE hinzugekommen sind (CREATE TABLE IF NOT EXISTS
+// ändert keine bereits vorhandenen Tabellen).
+function ensureColumn(instance, table, column, definition) {
+  const columns = instance.prepare(`PRAGMA table_info(${table})`).all();
+  if (!columns.some((c) => c.name === column)) {
+    instance.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${definition}`);
+  }
+}
+
 function openDatabase() {
   const instance = new Database(dbPath);
   instance.pragma('journal_mode = WAL');
   instance.pragma('foreign_keys = ON');
   instance.exec(SCHEMA_SQL);
+  ensureColumn(instance, 'durchsichten', 'sanftmut', 'TEXT');
   return instance;
 }
 

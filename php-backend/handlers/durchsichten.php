@@ -28,8 +28,8 @@ function handle_durchsichten(string $method, ?string $id, ?array $input): void {
             error_response('volk_id und datum sind erforderlich');
         }
         $stmt = $db->prepare('
-            INSERT INTO durchsichten (volk_id, datum, volksstaerke, brutnest, koenigin_gesehen, weiselzellen, futtervorrat, krankheiten, massnahmen, notizen)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO durchsichten (volk_id, datum, volksstaerke, brutnest, koenigin_gesehen, weiselzellen, futtervorrat, sanftmut, krankheiten, massnahmen, notizen)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ');
         $stmt->execute([
             $input['volk_id'],
@@ -39,6 +39,7 @@ function handle_durchsichten(string $method, ?string $id, ?array $input): void {
             !empty($input['koenigin_gesehen']) ? 1 : 0,
             !empty($input['weiselzellen']) ? 1 : 0,
             $input['futtervorrat'] ?? null,
+            $input['sanftmut'] ?? null,
             $input['krankheiten'] ?? null,
             $input['massnahmen'] ?? null,
             $input['notizen'] ?? null,
@@ -60,7 +61,7 @@ function handle_durchsichten(string $method, ?string $id, ?array $input): void {
 
         $stmt = $db->prepare('
             UPDATE durchsichten SET datum = ?, volksstaerke = ?, brutnest = ?, koenigin_gesehen = ?,
-              weiselzellen = ?, futtervorrat = ?, krankheiten = ?, massnahmen = ?, notizen = ?
+              weiselzellen = ?, futtervorrat = ?, sanftmut = ?, krankheiten = ?, massnahmen = ?, notizen = ?
             WHERE id = ?
         ');
         $stmt->execute([
@@ -70,6 +71,7 @@ function handle_durchsichten(string $method, ?string $id, ?array $input): void {
             $kg,
             $wz,
             $input['futtervorrat'] ?? $existing['futtervorrat'],
+            $input['sanftmut'] ?? $existing['sanftmut'],
             $input['krankheiten'] ?? $existing['krankheiten'],
             $input['massnahmen'] ?? $existing['massnahmen'],
             $input['notizen'] ?? $existing['notizen'],
