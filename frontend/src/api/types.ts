@@ -29,6 +29,9 @@ export interface Durchsicht {
   brutnest: string | null;
   koenigin_gesehen: number;
   weiselzellen: number;
+  stifte: number;
+  larven: number;
+  verdeckelte_brut: number;
   futtervorrat: string | null;
   sanftmut: string | null;
   krankheiten: string | null;

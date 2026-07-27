@@ -11,6 +11,9 @@ const emptyDurchsicht = {
   brutnest: '',
   koenigin_gesehen: false,
   weiselzellen: false,
+  stifte: false,
+  larven: false,
+  verdeckelte_brut: false,
   futtervorrat: '',
   sanftmut: '',
   krankheiten: '',
@@ -197,11 +200,15 @@ export function VolkDetail() {
             </div>
             <div className="field">
               <label>Volksstärke</label>
-              <input
-                placeholder="z.B. stark / mittel / schwach"
+              <select
                 value={durchsichtForm.volksstaerke}
                 onChange={(e) => setDurchsichtForm({ ...durchsichtForm, volksstaerke: e.target.value })}
-              />
+              >
+                <option value="">– keine Angabe –</option>
+                <option value="stark">stark</option>
+                <option value="mittel">mittel</option>
+                <option value="schwach">schwach</option>
+              </select>
             </div>
             <div className="field">
               <label>Brutnest</label>
@@ -228,6 +235,33 @@ export function VolkDetail() {
                 onChange={(e) => setDurchsichtForm({ ...durchsichtForm, weiselzellen: e.target.checked })}
               />
               <label htmlFor="weiselzellen">Weiselzellen vorhanden</label>
+            </div>
+            <div className="field checkbox">
+              <input
+                type="checkbox"
+                id="stifte"
+                checked={durchsichtForm.stifte}
+                onChange={(e) => setDurchsichtForm({ ...durchsichtForm, stifte: e.target.checked })}
+              />
+              <label htmlFor="stifte">Stifte</label>
+            </div>
+            <div className="field checkbox">
+              <input
+                type="checkbox"
+                id="larven"
+                checked={durchsichtForm.larven}
+                onChange={(e) => setDurchsichtForm({ ...durchsichtForm, larven: e.target.checked })}
+              />
+              <label htmlFor="larven">Larven</label>
+            </div>
+            <div className="field checkbox">
+              <input
+                type="checkbox"
+                id="verdeckelteBrut"
+                checked={durchsichtForm.verdeckelte_brut}
+                onChange={(e) => setDurchsichtForm({ ...durchsichtForm, verdeckelte_brut: e.target.checked })}
+              />
+              <label htmlFor="verdeckelteBrut">Verdeckelte Brut</label>
             </div>
             <div className="field">
               <label>Futtervorrat</label>

@@ -29,6 +29,9 @@ function get_db(): PDO {
 // bei einem frischen Import von schema.sql sind sie ohnehin schon vorhanden).
 function migrate_schema(PDO $pdo): void {
     ensure_column($pdo, 'durchsichten', 'sanftmut', 'VARCHAR(50) NULL');
+    ensure_column($pdo, 'durchsichten', 'stifte', 'TINYINT(1) NOT NULL DEFAULT 0');
+    ensure_column($pdo, 'durchsichten', 'larven', 'TINYINT(1) NOT NULL DEFAULT 0');
+    ensure_column($pdo, 'durchsichten', 'verdeckelte_brut', 'TINYINT(1) NOT NULL DEFAULT 0');
 }
 
 function ensure_column(PDO $pdo, string $table, string $column, string $definition): void {

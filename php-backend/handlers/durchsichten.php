@@ -28,8 +28,8 @@ function handle_durchsichten(string $method, ?string $id, ?array $input): void {
             error_response('volk_id und datum sind erforderlich');
         }
         $stmt = $db->prepare('
-            INSERT INTO durchsichten (volk_id, datum, volksstaerke, brutnest, koenigin_gesehen, weiselzellen, futtervorrat, sanftmut, krankheiten, massnahmen, notizen)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO durchsichten (volk_id, datum, volksstaerke, brutnest, koenigin_gesehen, weiselzellen, stifte, larven, verdeckelte_brut, futtervorrat, sanftmut, krankheiten, massnahmen, notizen)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ');
         $stmt->execute([
             $input['volk_id'],
@@ -38,6 +38,9 @@ function handle_durchsichten(string $method, ?string $id, ?array $input): void {
             $input['brutnest'] ?? null,
             !empty($input['koenigin_gesehen']) ? 1 : 0,
             !empty($input['weiselzellen']) ? 1 : 0,
+            !empty($input['stifte']) ? 1 : 0,
+            !empty($input['larven']) ? 1 : 0,
+            !empty($input['verdeckelte_brut']) ? 1 : 0,
             $input['futtervorrat'] ?? null,
             $input['sanftmut'] ?? null,
             $input['krankheiten'] ?? null,
@@ -58,10 +61,14 @@ function handle_durchsichten(string $method, ?string $id, ?array $input): void {
 
         $kg = array_key_exists('koenigin_gesehen', $input) ? (!empty($input['koenigin_gesehen']) ? 1 : 0) : $existing['koenigin_gesehen'];
         $wz = array_key_exists('weiselzellen', $input) ? (!empty($input['weiselzellen']) ? 1 : 0) : $existing['weiselzellen'];
+        $stifte = array_key_exists('stifte', $input) ? (!empty($input['stifte']) ? 1 : 0) : $existing['stifte'];
+        $larven = array_key_exists('larven', $input) ? (!empty($input['larven']) ? 1 : 0) : $existing['larven'];
+        $verdeckelteBrut = array_key_exists('verdeckelte_brut', $input) ? (!empty($input['verdeckelte_brut']) ? 1 : 0) : $existing['verdeckelte_brut'];
 
         $stmt = $db->prepare('
             UPDATE durchsichten SET datum = ?, volksstaerke = ?, brutnest = ?, koenigin_gesehen = ?,
-              weiselzellen = ?, futtervorrat = ?, sanftmut = ?, krankheiten = ?, massnahmen = ?, notizen = ?
+              weiselzellen = ?, stifte = ?, larven = ?, verdeckelte_brut = ?, futtervorrat = ?, sanftmut = ?,
+              krankheiten = ?, massnahmen = ?, notizen = ?
             WHERE id = ?
         ');
         $stmt->execute([
@@ -70,6 +77,9 @@ function handle_durchsichten(string $method, ?string $id, ?array $input): void {
             $input['brutnest'] ?? $existing['brutnest'],
             $kg,
             $wz,
+            $stifte,
+            $larven,
+            $verdeckelteBrut,
             $input['futtervorrat'] ?? $existing['futtervorrat'],
             $input['sanftmut'] ?? $existing['sanftmut'],
             $input['krankheiten'] ?? $existing['krankheiten'],

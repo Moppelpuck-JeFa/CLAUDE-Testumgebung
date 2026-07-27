@@ -21,12 +21,13 @@ router.post('/', (req, res) => {
   const b = req.body;
   if (!b.volk_id || !b.datum) return res.status(400).json({ error: 'volk_id und datum sind erforderlich' });
   const result = db.prepare(`
-    INSERT INTO durchsichten (volk_id, datum, volksstaerke, brutnest, koenigin_gesehen, weiselzellen, futtervorrat, sanftmut, krankheiten, massnahmen, notizen)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO durchsichten (volk_id, datum, volksstaerke, brutnest, koenigin_gesehen, weiselzellen, stifte, larven, verdeckelte_brut, futtervorrat, sanftmut, krankheiten, massnahmen, notizen)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).run(
     b.volk_id, b.datum, b.volksstaerke ?? null, b.brutnest ?? null,
-    b.koenigin_gesehen ? 1 : 0, b.weiselzellen ? 1 : 0, b.futtervorrat ?? null,
-    b.sanftmut ?? null, b.krankheiten ?? null, b.massnahmen ?? null, b.notizen ?? null
+    b.koenigin_gesehen ? 1 : 0, b.weiselzellen ? 1 : 0,
+    b.stifte ? 1 : 0, b.larven ? 1 : 0, b.verdeckelte_brut ? 1 : 0,
+    b.futtervorrat ?? null, b.sanftmut ?? null, b.krankheiten ?? null, b.massnahmen ?? null, b.notizen ?? null
   );
   res.status(201).json(db.prepare('SELECT * FROM durchsichten WHERE id = ?').get(result.lastInsertRowid));
 });
@@ -37,7 +38,8 @@ router.put('/:id', (req, res) => {
   const b = req.body;
   db.prepare(`
     UPDATE durchsichten SET datum = ?, volksstaerke = ?, brutnest = ?, koenigin_gesehen = ?,
-      weiselzellen = ?, futtervorrat = ?, sanftmut = ?, krankheiten = ?, massnahmen = ?, notizen = ?
+      weiselzellen = ?, stifte = ?, larven = ?, verdeckelte_brut = ?, futtervorrat = ?, sanftmut = ?,
+      krankheiten = ?, massnahmen = ?, notizen = ?
     WHERE id = ?
   `).run(
     b.datum ?? existing.datum,
@@ -45,6 +47,9 @@ router.put('/:id', (req, res) => {
     b.brutnest ?? existing.brutnest,
     b.koenigin_gesehen !== undefined ? (b.koenigin_gesehen ? 1 : 0) : existing.koenigin_gesehen,
     b.weiselzellen !== undefined ? (b.weiselzellen ? 1 : 0) : existing.weiselzellen,
+    b.stifte !== undefined ? (b.stifte ? 1 : 0) : existing.stifte,
+    b.larven !== undefined ? (b.larven ? 1 : 0) : existing.larven,
+    b.verdeckelte_brut !== undefined ? (b.verdeckelte_brut ? 1 : 0) : existing.verdeckelte_brut,
     b.futtervorrat ?? existing.futtervorrat,
     b.sanftmut ?? existing.sanftmut,
     b.krankheiten ?? existing.krankheiten,

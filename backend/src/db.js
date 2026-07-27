@@ -47,6 +47,9 @@ CREATE TABLE IF NOT EXISTS durchsichten (
   brutnest TEXT,
   koenigin_gesehen INTEGER DEFAULT 0,
   weiselzellen INTEGER DEFAULT 0,
+  stifte INTEGER DEFAULT 0,
+  larven INTEGER DEFAULT 0,
+  verdeckelte_brut INTEGER DEFAULT 0,
   futtervorrat TEXT,
   sanftmut TEXT,
   krankheiten TEXT,
@@ -118,6 +121,9 @@ function openDatabase() {
   instance.pragma('foreign_keys = ON');
   instance.exec(SCHEMA_SQL);
   ensureColumn(instance, 'durchsichten', 'sanftmut', 'TEXT');
+  ensureColumn(instance, 'durchsichten', 'stifte', 'INTEGER DEFAULT 0');
+  ensureColumn(instance, 'durchsichten', 'larven', 'INTEGER DEFAULT 0');
+  ensureColumn(instance, 'durchsichten', 'verdeckelte_brut', 'INTEGER DEFAULT 0');
   return instance;
 }
 
