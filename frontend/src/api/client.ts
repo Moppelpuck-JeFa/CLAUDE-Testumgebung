@@ -1,6 +1,9 @@
 import { clearToken, getToken } from './authStore';
 
-const BASE = '/api';
+// import.meta.env.BASE_URL endet immer mit "/" (z.B. "/" oder "/imkerei/"),
+// dadurch funktioniert dieselbe Build-Ausgabe an der Domain-Wurzel wie in
+// einem Unterordner, ohne die API-Pfade separat konfigurieren zu müssen.
+const BASE = `${import.meta.env.BASE_URL}api`;
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const token = getToken();

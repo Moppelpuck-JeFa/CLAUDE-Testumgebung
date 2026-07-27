@@ -1,9 +1,9 @@
 <IfModule mod_rewrite.c>
 RewriteEngine On
-RewriteBase /
+RewriteBase /imkerei/
 
-# API-Anfragen unangetastet lassen (werden vom php-backend/ Unterordner beantwortet)
-RewriteCond %{REQUEST_URI} ^/api/ [NC]
+# API-Anfragen unangetastet lassen (werden von api/.htaccess beantwortet)
+RewriteCond %{REQUEST_URI} ^/imkerei/api/ [NC]
 RewriteRule ^ - [L]
 
 # Vorhandene Dateien/Ordner (JS, CSS, Bilder, ...) direkt ausliefern
